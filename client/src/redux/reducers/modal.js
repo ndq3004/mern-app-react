@@ -2,7 +2,6 @@ import { INIT_STATE } from '../../constants'
 import { getType, hideModal, showModal } from '../actions'
 
 export default function modalReducers(state = INIT_STATE.modal, action) {
-    debugger
     switch (action.type) {
         case getType(showModal):
             return {

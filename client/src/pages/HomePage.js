@@ -19,7 +19,7 @@ export default function HomePage() {
     <Container maxWidth="lg" >
         <Header />
         <PostList />
-        {/* <CreatePostModal /> */}
+        <CreatePostModal />
         <Fab color='primary' className={classes.fab} onClick={openCreatePostModal}>
           <AddIcon />
         </Fab>
