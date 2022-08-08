@@ -1,10 +1,12 @@
-import { Button, Modal, TextareaAutosize, TextField } from "@material-ui/core";
-import React from "react";
+import { Button, Modal, TextareaAutosize, TextField, Box } from "@material-ui/core";
+import CircularProgress from '@material-ui/core/CircularProgress'
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { modalState$ } from "../../redux/selectors";
 import useStyles from "./styles";
 import FileBase64 from "react-file-base64";
 import { hideModal, createPost } from "../../redux/actions";
+import * as api from '../../api'
 
 export default function CreatePostModal() {
   const [data, setData] = React.useState({
@@ -15,18 +17,25 @@ export default function CreatePostModal() {
 
   const classes = useStyles();
   const { isShow } = useSelector(modalState$);
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
   const onCloseModal = React.useCallback(() => {
-    dispath(hideModal());
+    dispatch(hideModal());
     setData({ title: "", content: "", attachment: "" });
-  }, [dispath]);
+  }, [dispatch]);
 
   const onSubmit = React.useCallback(() => {
-    // React.useEffect
-    dispath(createPost.createPostRequest(data));
-    onCloseModal()
-  }, [data, dispath]);
+    api.createPost(data).then(res => {
+      dispatch(createPost.createPostSuccess(res.data))
+      onCloseModal()
+    }).catch(ex => {
+      dispatch(createPost.createPostFailure())
+    })
+    // onCloseModal()
+  }, [data, dispatch]);
+
+  useEffect(() => {
+  })
 
   const body = (
     <div className={classes.paper}>
@@ -66,6 +75,9 @@ export default function CreatePostModal() {
           >
             Create
           </Button>
+          <Box sx={{ display: 'none' }} display={false}>
+            <CircularProgress />
+          </Box>
         </div>
       </form>
     </div>

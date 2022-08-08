@@ -7,12 +7,14 @@ import { createStore, applyMiddleware} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import reducers from './redux/reducers';
 import mySaga from './redux/sagas';
+import myPostSaga from './redux/sagas/updatePost';
 
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(reducers, applyMiddleware(sagaMiddleware))
 
 sagaMiddleware.run(mySaga)
+sagaMiddleware.run(myPostSaga)
 
 ReactDOM.render(
   <Provider store={store}>

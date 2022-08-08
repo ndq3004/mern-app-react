@@ -11,7 +11,7 @@ export const getPosts = createActions({
 })
 
 export const createPost = createActions({
-    createPostRequest: (payload) => (payload),
+    createPostRequest: (payload, callBackFn) => (payload, callBackFn),
     createPostSuccess: (payload) => (payload),
     createPostFailure: (err) => (err)
 })

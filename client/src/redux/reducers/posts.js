@@ -39,7 +39,7 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
     case getType(updatePost.updatePostSuccess):
       return {
         ...state,
-        data: [...state.data, action.payload],
+        data: state.data.map(post => post._id === action.payload._id ? action.payload : post),
       };
     default:
       return state;
