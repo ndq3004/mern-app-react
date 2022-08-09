@@ -26,6 +26,11 @@ export default makeStyles((theme) => ({
         marginBottom: '10px'
     },
     footer: {
-        marginTop: '10px'
+        marginTop: '10px',
+        display: 'flex'
+    },
+    footerBox:{
+        width: '75%',
     }
+
 }));

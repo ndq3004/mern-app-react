@@ -1,9 +1,9 @@
 import { PostModel } from "../models/postModels.js"
 export const getPosts = async function (req, res) {
     try {
-        const posts = await PostModel.find();
-        console.log('post', posts)
-        res.send(posts)
+        // const posts = await PostModel.find();
+        // console.log('post', posts)
+        res.send([])
     } catch (err) {
         res.status(500).json({ error: err })
     }
@@ -15,7 +15,9 @@ export const createPost = function (req, res) {
 
         const postToSave = new PostModel(post)
         postToSave.save().then(() => {
-            res.status(200).json(postToSave)
+            setTimeout(() => {
+                res.status(200).json(postToSave)
+            }, 1000)
         }).catch(err => {
             res.status(500).json({ error: err })
         })

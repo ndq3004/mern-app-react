@@ -1,4 +1,6 @@
 import { Button, Modal, TextareaAutosize, TextField, Box } from "@material-ui/core";
+import Alert from '@mui/material/Alert';
+import Snackbar from "@mui/material/Snackbar";
 import CircularProgress from '@material-ui/core/CircularProgress'
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +16,15 @@ export default function CreatePostModal() {
     content: "",
     attachment: "",
   });
+  const [currentState, setCurrentState] = React.useState({
+    isLoading: false,
+    showErrorMgs: false,
+    showSuccessBar: false,
+    vertical: 'top',
+    horizontal: 'right'
+  })
+
+  const { vertical, horizontal, showSuccessBar } = currentState;
 
   const classes = useStyles();
   const { isShow } = useSelector(modalState$);
@@ -22,17 +33,21 @@ export default function CreatePostModal() {
   const onCloseModal = React.useCallback(() => {
     dispatch(hideModal());
     setData({ title: "", content: "", attachment: "" });
-  }, [dispatch]);
+    setCurrentState({ ...currentState, isLoading: false, showSuccessBar: true })
+  }, [dispatch, setCurrentState]);
 
   const onSubmit = React.useCallback(() => {
+    setCurrentState({ ...currentState, isLoading: true, showErrorMgs: false })
+    // setCurrentState({ ...currentState, showSuccessBar: true })
     api.createPost(data).then(res => {
       dispatch(createPost.createPostSuccess(res.data))
       onCloseModal()
+      setCurrentState({ ...currentState, showSuccessBar: true })
     }).catch(ex => {
+      setCurrentState({ ...currentState, isLoading: false, showErrorMgs: true })
       dispatch(createPost.createPostFailure())
     })
-    // onCloseModal()
-  }, [data, dispatch]);
+  }, [data, dispatch, setCurrentState]);
 
   useEffect(() => {
   })
@@ -42,6 +57,7 @@ export default function CreatePostModal() {
       <div className={classes.header}>
         <h2>Create new post</h2>
       </div>
+      {currentState.showErrorMgs && <Alert severity="error">Somethings went wrong!</Alert>}
       <form noValidate autoComplete="off" className={classes.form}>
         <TextField
           className={classes.title}
@@ -66,6 +82,11 @@ export default function CreatePostModal() {
           onDone={({ base64 }) => setData({ ...data, attachment: base64 })}
         />
         <div className={classes.footer}>
+          <div className={classes.footerBox}>
+            {currentState.isLoading && <Box>
+              <CircularProgress />
+            </Box>}
+          </div>
           <Button
             variant="contained"
             color="primary"
@@ -75,19 +96,33 @@ export default function CreatePostModal() {
           >
             Create
           </Button>
-          <Box sx={{ display: 'none' }} display={false}>
-            <CircularProgress />
-          </Box>
         </div>
       </form>
     </div>
   );
+
+  const successNotify = (
+    <div>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={currentState.showSuccessBar}
+        onClose={(() => setCurrentState({ ...currentState, showSuccessBar: false }))}
+        key={vertical + horizontal}
+        autoHideDuration={3000}
+      >
+        <Alert onClose={(() => setCurrentState({ ...currentState, showSuccessBar: false }))} severity="success" sx={{ width: '100%' }}>
+          !
+        </Alert>
+      </Snackbar>
+    </div>
+  )
 
   return (
     <div>
       <Modal open={isShow} onClose={onCloseModal}>
         {body}
       </Modal>
+      {successNotify}
     </div>
   );
 }
